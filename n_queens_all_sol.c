@@ -1,34 +1,36 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#define N 8
-
-int n = N;
-int x[N + 1];
-int solution_count = 0;
-
-void ft_putchar(char c)
+int ft_atoi(const char *str)
 {
-    write(1, &c, 1);
+    int res = 0;
+    while (*str)
+    {
+        if (*str >= '0' && *str <= '9')
+            res = res * 10 + (*str - '0');
+        else
+            break;
+        str++;
+    }
+    return res;
 }
 
-void print_board()
+void print_solution(int *x, int n)
 {
     for (int i = 1; i <= n; ++i)
     {
         for (int j = 1; j <= n; ++j)
         {
             if (x[j] == i)
-                ft_putchar('Q');
-            else
-                ft_putchar('.');
+            {
+                fprintf(stdout, "%d ", j-1);
+            }
         }
-        ft_putchar('\n');
     }
-    ft_putchar('\n');
+    fprintf(stdout, "\n");
 }
 
-int is_safe(int k)
+int is_safe(int *x, int k)
 {
     for (int i = 1; i < k; ++i)
     {
@@ -40,27 +42,28 @@ int is_safe(int k)
     return 1;
 }
 
-void solve(int k)
+void solve(int *x, int k, int n)
 {
     if (k > n)
     {
-        solution_count++;
-        print_board();
+        print_solution(x, n);
         return;
     }
-
-    for (int i = 1; i <= n; ++i)
+    for (int i = n; i >= 1; --i)
     {
         x[k] = i;
-        if (is_safe(k))
-            solve(k + 1);
+        if (is_safe(x, k))
+            solve(x, k + 1, n);
     }
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
-    solve(1);
-    printf("Total solutions: %d\n", solution_count);
+    if (argc != 2 || *argv[1] == '0')
+        return (1);
+    int n = ft_atoi(argv[1]);
+    int x[n + 1];
+    solve(x, 1, n);
     return 0;
 }
 
